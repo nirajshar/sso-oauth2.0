@@ -34,4 +34,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # Environment
-.development.env
+.env.development
+
+# Git ignore
+.gitignore
