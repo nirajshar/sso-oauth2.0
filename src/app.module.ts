@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ApplicationModule } from './application/application.module';
 import { ClientModule } from './client/client.module';
+import { PocModule } from './poc/poc.module';
+import { ClanModule } from './clan/clan.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -27,6 +29,8 @@ import { ClientModule } from './client/client.module';
   UserModule,
   ApplicationModule,
   ClientModule,
+  PocModule,
+  ClanModule,  
 ],
   controllers: [AppController],
   providers: [AppService],

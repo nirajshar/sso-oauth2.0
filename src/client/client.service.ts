@@ -58,7 +58,7 @@ export class ClientService {
 
   async getOneClient(id: string) {
     const client = await this.clientRepository.findOne({
-      where: { id },
+      where: { id: parseInt(id) },
     });
     if (!client) {
       throw new HttpException(

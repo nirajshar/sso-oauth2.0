@@ -1,4 +1,6 @@
 import { ApplicationEntity } from 'src/application/entities/application.entity';
+import { ClanEntity } from 'src/clan/entities/clan.entity';
+import { PocEntity } from 'src/poc/entities/poc.entity';
 import {
   Column,
   CreateDateColumn,
@@ -6,6 +8,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -49,10 +52,6 @@ export class ClientEntity {
   @Column({ type: 'varchar', nullable: false })
   contact: string;
 
-  @ManyToOne((type) => ApplicationEntity, (application) => application.id)
-  @JoinColumn({ name: 'application_id' })
-  application: ApplicationEntity;
-
   @Column('enum', {
     enum: STATUS,
     default: STATUS[STATUS.INACTIVE],
@@ -73,4 +72,16 @@ export class ClientEntity {
 
   @DeleteDateColumn()
   deleted_at: Date;
+  
+  @ManyToOne((type) => ApplicationEntity, (application) => application.id)
+  @JoinColumn({ name: 'application_id' })
+  application: ApplicationEntity;
+
+  @OneToMany(type => PocEntity, poc => poc.id)
+  poc: PocEntity[];
+
+  @OneToMany(type => ClanEntity, clan => clan.id)
+  clan: ClanEntity[];
+
+
 }
