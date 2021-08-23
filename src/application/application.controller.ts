@@ -14,8 +14,8 @@ export class ApplicationController {
     }
 
     @Post()
-    async createApplication(@Body() createApplicationDto: CreateApplicationDto) {
-        return await this.applicationService.createApplication(createApplicationDto);
+    async createOneApplication(@Body() createApplicationDto: CreateApplicationDto) {
+        return await this.applicationService.createOneApplication(createApplicationDto);
     }
 
     @Get('/:id')
@@ -24,8 +24,8 @@ export class ApplicationController {
     }   
 
     @Put('/:id')
-    async updateApplication(@Param('id') id: string, @Body() updateApplicationDTO: UpdateApplicationDTO ) {
-        return await this.applicationService.updateApplication(id, updateApplicationDTO);
+    async updateOneApplication(@Param('id') id: string, @Body() updateApplicationDTO: UpdateApplicationDTO ) {
+        return await this.applicationService.updateOneApplication(id, updateApplicationDTO);
     }
 
     @Delete('/:id')

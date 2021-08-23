@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { ApplicationModule } from './application/application.module';
+import { ClientModule } from './client/client.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -25,6 +26,7 @@ import { ApplicationModule } from './application/application.module';
   AuthModule,
   UserModule,
   ApplicationModule,
+  ClientModule,
 ],
   controllers: [AppController],
   providers: [AppService],

@@ -38,3 +38,4 @@ lerna-debug.log*
 
 # Git ignore
 .gitignore
+Request-Parameters.txt

@@ -1,12 +1,11 @@
-import { Max } from 'class-validator';
-import { ClientEntity } from 'src/client/entities/client.entity';
+import { ApplicationEntity } from 'src/application/entities/application.entity';
 import {
-  BeforeInsert,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  OneToMany,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -18,26 +17,41 @@ enum STATUS {
   PERMANENT_BLOCKED = 'PERMANENT BLOCKED',
 }
 
-@Entity({ name: 'applications' })
-export class ApplicationEntity {
+@Entity({ name: 'clients' })
+export class ClientEntity {
   @PrimaryGeneratedColumn()
-  id: number;
+  id: Number;
 
-  @Column()
-  name: string;
+  @Column({ type: 'varchar', nullable: false })
+  actual_name: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  display_name: string;
+
+  @Column({ type: 'text', nullable: false })
+  address: string;
+
+  @Column({ type: 'text', nullable: false })
+  pincode: string;
+
+  @Column({ type: 'text', nullable: false })
+  city: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  state: string;
+
+  @Column({ type: 'varchar', nullable: false })
+  country: string;
 
   @Column({ type: 'varchar', nullable: false, unique: true })
-  @Max(50)
-  application_key: string;
+  email: string;
 
-  @Column({ type: 'text', nullable: false })
-  application_secret: string;
+  @Column({ type: 'varchar', nullable: false })
+  contact: string;
 
-  @Column({ type: 'text', nullable: false })
-  allowed_url: string;
-
-  @Column({ type: 'text', nullable: false })
-  redirect_url: string;
+  @ManyToOne((type) => ApplicationEntity, (application) => application.id)
+  @JoinColumn({ name: 'application_id' })
+  application: ApplicationEntity;
 
   @Column('enum', {
     enum: STATUS,
@@ -59,13 +73,4 @@ export class ApplicationEntity {
 
   @DeleteDateColumn()
   deleted_at: Date;
-
-  @OneToMany(type => ClientEntity, client => client.id)
-  client: ClientEntity[];
-
-  @BeforeInsert() async sanitizeKey() {
-    this.application_key = await this.application_key
-      .replace(/\s/g, '')
-      .toLowerCase();
-  }
 }

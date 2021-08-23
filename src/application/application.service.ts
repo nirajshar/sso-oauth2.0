@@ -35,7 +35,7 @@ export class ApplicationService {
     };
   }
 
-  async createApplication(createApplicationDto: CreateApplicationDto) {
+  async createOneApplication(createApplicationDto: CreateApplicationDto) {
     try {
       const application =
         this.applicationRepository.create(createApplicationDto);
@@ -82,7 +82,7 @@ export class ApplicationService {
     };
   }
 
-  async updateApplication(
+  async updateOneApplication(
     id: string,
     updateApplicationDTO: UpdateApplicationDTO,
   ) {
