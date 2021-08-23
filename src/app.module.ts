@@ -9,6 +9,7 @@ import { ApplicationModule } from './application/application.module';
 import { ClientModule } from './client/client.module';
 import { PocModule } from './poc/poc.module';
 import { ClanModule } from './clan/clan.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -30,7 +31,8 @@ import { ClanModule } from './clan/clan.module';
   ApplicationModule,
   ClientModule,
   PocModule,
-  ClanModule,  
+  ClanModule,
+  RoleModule,  
 ],
   controllers: [AppController],
   providers: [AppService],

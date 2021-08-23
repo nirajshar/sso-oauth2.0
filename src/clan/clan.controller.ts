@@ -19,7 +19,7 @@ export class ClanController {
     }
 
     @Get('/:id')
-    async getOneClane(@Param('id') id: string) {
+    async getOneClan(@Param('id') id: string) {
         return await this.clanService.getOneClan(id);
     }   
 

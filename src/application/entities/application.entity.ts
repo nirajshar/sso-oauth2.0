@@ -1,5 +1,6 @@
 import { Max } from 'class-validator';
 import { ClientEntity } from 'src/client/entities/client.entity';
+import { RoleEntity } from 'src/role/entities/role.entity';
 import {
   BeforeInsert,
   Column,
@@ -68,4 +69,7 @@ export class ApplicationEntity {
       .replace(/\s/g, '')
       .toLowerCase();
   }
+
+  @OneToMany(type => RoleEntity, role => role.id)
+  role: RoleEntity[];
 }
