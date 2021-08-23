@@ -37,9 +37,9 @@ export class UserService {
     return toUserDto(user);
   }
 
-  async findByPayload({ username }: any): Promise<UserDto> {
+  async findByPayload({ email }: any): Promise<UserDto> {
     return await this.findOne({
-      where: { username },
+      where: { email },
     });
   }
 
@@ -59,5 +59,5 @@ export class UserService {
     });
     await this.userRepository.save(user);
     return toUserDto(user);
-  }
+  } 
 }

@@ -7,5 +7,9 @@ declare namespace NodeJS {
         MYSQL_DB_PASS?: string;
         MYSQL_DB_PORT?: string;
         MYSQL_DB_NAME?: string;
+        SESSION_KEY?:string;
+        MEMCACHE_HOST?:string;
+        MEMCACHE_PORT?:string;
+        MEMCACHE_SECRET?:string;
     }
 }

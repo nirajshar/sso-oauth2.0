@@ -28,13 +28,19 @@ export class UserEntity {
   @Column({ type: 'text', nullable: false })
   password: string;
 
+  @Column()
   @CreateDateColumn()
   created_at: Date;
 
+  @Column()
   @UpdateDateColumn()
   updated_at: Date;
 
   @BeforeInsert() async hashPassword() {
     this.password = await bcrypt.hash(this.password, 10);
+  }
+
+  async validatePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
   }
 }
