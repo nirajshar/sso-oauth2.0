@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CreateRoleDto } from './dto/create.dto';
+import { RoleOwnsPermissions } from './dto/roleOwnsPermissions.dto';
 import { UpdateRoleDto } from './dto/update.dto';
 import { RoleService } from './role.service';
 
@@ -31,6 +32,19 @@ export class RoleController {
     @Delete('/:id')
     async deleteOneRole(@Param('id') id: string) {
         return await this.roleService.deleteOneRole(id);
+    }
+
+    // ## ACL
+    // Grant permission to Role   
+    @Post('grant/:id')
+    async grantPermissionsToRole(@Param('id') id: string, @Body() permissions: RoleOwnsPermissions[]) {
+        return this.roleService.grantPermissionsToRole(id, permissions);
+    }
+
+    // Revoke permission from Role   
+    @Post('revoke/:id')
+    async revokePermissionsFromRole(@Param('id') id: string, @Body() permissions: RoleOwnsPermissions[]) {
+        return this.roleService.revokePermissionsFromRole(id, permissions);
     }
 
 }

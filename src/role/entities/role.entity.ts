@@ -1,10 +1,13 @@
 import { ApplicationEntity } from 'src/application/entities/application.entity';
+import { PermissionEntity } from 'src/permission/entities/permission.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -49,4 +52,18 @@ export class RoleEntity {
   @ManyToOne((type) => ApplicationEntity, (application) => application.id)
   @JoinColumn({ name: 'application_id' })
   application: ApplicationEntity;
+
+  @ManyToMany((type) => PermissionEntity, { cascade: true })
+  @JoinTable({
+    name: 'role_owns_permission',
+    joinColumn: {
+      name: 'role_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'permission_id',
+      referencedColumnName: 'id',
+    },
+  })
+  owns: PermissionEntity[];
 }
