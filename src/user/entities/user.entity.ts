@@ -3,10 +3,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { ApplicationEntity } from 'src/application/entities/application.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -43,4 +46,18 @@ export class UserEntity {
   async validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);
   }
+
+  @ManyToMany((type) => ApplicationEntity, { cascade: true })
+  @JoinTable({
+    name: 'user_has_application',
+    joinColumn: {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'application_id',
+      referencedColumnName: 'id',
+    },
+  })
+  user_has_application: ApplicationEntity[];
 }

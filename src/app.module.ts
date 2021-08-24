@@ -10,6 +10,7 @@ import { ClientModule } from './client/client.module';
 import { PocModule } from './poc/poc.module';
 import { ClanModule } from './clan/clan.module';
 import { RoleModule } from './role/role.module';
+import { PermissionModule } from './permission/permission.module';
 
 @Module({
   imports: [ConfigModule.forRoot({
@@ -32,7 +33,8 @@ import { RoleModule } from './role/role.module';
   ClientModule,
   PocModule,
   ClanModule,
-  RoleModule,  
+  RoleModule,
+  PermissionModule,  
 ],
   controllers: [AppController],
   providers: [AppService],

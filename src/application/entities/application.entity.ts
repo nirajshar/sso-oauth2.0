@@ -19,6 +19,11 @@ enum STATUS {
   PERMANENT_BLOCKED = 'PERMANENT BLOCKED',
 }
 
+enum AUTHENTICATION_TYPE {
+  JWT = 'JWT',
+  OAUTH2 = 'OAUTH2',  
+}
+
 @Entity({ name: 'applications' })
 export class ApplicationEntity {
   @PrimaryGeneratedColumn()
@@ -45,6 +50,15 @@ export class ApplicationEntity {
     default: STATUS[STATUS.INACTIVE],
   })
   status: string;
+  
+  @Column('enum', {
+    enum: AUTHENTICATION_TYPE,
+    default: AUTHENTICATION_TYPE[AUTHENTICATION_TYPE.OAUTH2],
+  })
+  authentication_type: string;
+
+  @Column({ type: 'tinyint', nullable: false })
+  max_request_attempts: Number;
 
   //   @Column()
   //   created_by: string; // Has to be Realtion with USER ID
