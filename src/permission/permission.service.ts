@@ -1,0 +1,139 @@
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreatePermissionDto } from './dto/create.dto';
+import { UpdatePermissionDto } from './dto/update.dto';
+import { PermissionEntity } from './entities/permission.entity';
+import { toPermissionDto } from './ro/toPermissionDto.dto';
+
+@Injectable()
+export class PermissionService {
+  constructor(
+    @InjectRepository(PermissionEntity)
+    private readonly permissionRepository: Repository<PermissionEntity>,
+  ) {}
+
+  async getAllPermissions() {
+    const permissions = await this.permissionRepository.find();
+
+    if (!permissions[0]) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Permissions not found',
+          error: 'Not Found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Permissions found',
+      permissions: permissions.map((permission) => toPermissionDto(permission)),
+    };
+  }
+
+  async createOnePermission(createPermissionDto: CreatePermissionDto) {
+    try {
+      const permission = this.permissionRepository.create(createPermissionDto);
+      const storePermission = await this.permissionRepository.save(permission);
+
+      return {
+        statusCode: HttpStatus.CREATED,
+        message: 'Permission created successfully',
+        permission: toPermissionDto(permission),
+      };
+    } catch (err) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Something went wrong',
+          error: 'Bad Request',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  }
+
+  async getOnePermission(id: string) {
+    const permission = await this.permissionRepository.findOne({
+      where: { id: parseInt(id) },
+    });
+    if (!permission) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Permission not found',
+          error: 'Not Found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Permission found',
+      permission: toPermissionDto(permission),
+    };
+  }
+
+  async updateOnePermission(
+    id: string,
+    updatePermissionDto: UpdatePermissionDto,
+  ) {
+    const permission = await this.permissionRepository.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!permission) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Permission not found',
+          error: 'Not Found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.permissionRepository.update(
+      { id: permission.id },
+      updatePermissionDto,
+    );
+
+    const updatedPermission = await this.permissionRepository.findOne({
+      where: { id: permission.id },
+    });
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Permission updated successfully',
+      permission: toPermissionDto(updatedPermission),
+    };
+  }
+
+  async deleteOnePermission(id: string) {
+    const permission = await this.permissionRepository.findOne({
+      where: { id: parseInt(id) },
+    });
+
+    if (!permission) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.NOT_FOUND,
+          message: 'Permission not found',
+          error: 'Not Found',
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    await this.permissionRepository.delete({ id: parseInt(id) });
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Permission deleted successfully',
+    };
+  }
+}
