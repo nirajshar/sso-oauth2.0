@@ -177,4 +177,22 @@ export class ApplicationService {
       application: toApplicationDto(updatedApplication),
     };
   }
+
+  // Internal use : Functions
+  async getListOfApplications() {
+    const applications = await this.applicationRepository.find();
+
+    if (!applications[0]) {
+      return {
+        statusCode: HttpStatus.NOT_FOUND,
+        message: 'Applications not found',
+      };
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Applications found',
+      applications: applications.map((app) => app.allowed_url),
+    };
+  }
 }

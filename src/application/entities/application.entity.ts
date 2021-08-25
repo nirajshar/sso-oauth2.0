@@ -57,7 +57,7 @@ export class ApplicationEntity {
   })
   authentication_type: string;
 
-  @Column({ type: 'tinyint', nullable: false })
+  @Column({ type: 'tinyint', nullable: false, default: 5 })
   max_request_attempts: Number;
 
   //   @Column()
