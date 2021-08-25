@@ -34,7 +34,7 @@ export class RoleService {
     return {
       statusCode: HttpStatus.OK,
       message: 'Roles found',
-      roles: roles.map((role) => toRoleDto(role)),
+      roles: roles.map((role) => toRolePermissionDto(role)),
     };
   }
 
@@ -63,6 +63,7 @@ export class RoleService {
   async getOneRole(id: string) {
     const role = await this.roleRepository.findOne({
       where: { id: parseInt(id) },
+      relations: ['owns']
     });
     if (!role) {
       throw new HttpException(
@@ -78,7 +79,7 @@ export class RoleService {
     return {
       statusCode: HttpStatus.OK,
       message: 'Role found',
-      role: toRoleDto(role),
+      role: toRolePermissionDto(role),
     };
   }
 
@@ -102,12 +103,13 @@ export class RoleService {
 
     const updatedRole = await this.roleRepository.findOne({
       where: { id: role.id },
+      relations: ['owns']
     });
 
     return {
       statusCode: HttpStatus.OK,
       message: 'Role updated successfully',
-      role: toRoleDto(updatedRole),
+      role: toRolePermissionDto(updatedRole),
     };
   }
 
