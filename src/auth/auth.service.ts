@@ -1,70 +1,95 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ApplicationService } from 'src/application/application.service';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from 'src/auth/dto/jwtPayload.interface';
+import { CreateUserDto } from 'src/user/dto/create.dto';
+import { LoginUserDto } from 'src/user/dto/login.dto';
+import { UserDto } from 'src/user/dto/user.dto';
 import { UserService } from 'src/user/user.service';
-import { uuid } from 'uuidv4';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
-    private readonly applicationService: ApplicationService,
+    private readonly jwtService: JwtService,
   ) {}
 
-  async login(req, res) {
-    const { serviceURL } = req.query;
+  // JWT
 
-    const applications = await this.applicationService.getListOfApplications();
+  async register(createUserDto: CreateUserDto) {
+    try {
+      const user = await this.userService.create(createUserDto);
 
-    if (applications.statusCode !== 200) {
+      if (user) {
+        return {
+          statusCode: HttpStatus.OK,
+          message: 'User created successfully',
+        };
+      } else {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.BAD_REQUEST,
+            message: 'Request Failed',
+            error: 'Bad Request',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (err) {
       throw new HttpException(
         {
-          statusCode: HttpStatus.NOT_FOUND,
-          message: 'Applications not found',
-          error: 'Not Found',
+          statusCode: HttpStatus.EXPECTATION_FAILED,
+          message: 'Something went wrong',
+          error: 'Expectation Failed',
         },
-        HttpStatus.NOT_FOUND,
+        HttpStatus.EXPECTATION_FAILED,
+      );
+    }
+  }
+
+  async login(loginUserDto: LoginUserDto) {
+    const user = await this.userService.findByLogin(loginUserDto);
+
+    if (!user) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Invalid Credentials',
+          error: 'Unauthorized',
+        },
+        HttpStatus.UNAUTHORIZED,
       );
     }
 
-    if (serviceURL != null) {
-      const url = new URL(serviceURL);
-      if (applications.applications.includes(url.origin)) {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.FORBIDDEN,
-            message: 'Service URL not recognized',
-            error: 'Forbidden',
-          },
-          HttpStatus.FORBIDDEN,
-        );
-      }
-    }
+    const token = this._createToken(user);
 
-    if (req.session.user != null && serviceURL == null) {
-      // return res.redirect('/');
-    }
-
-    if (req.session.user != null && serviceURL != null) {
-      const url = new URL(serviceURL);
-      const intrmid = await uuid().replace(/-/gi, '');
-      // storeApplicationInCache(url.origin, req.session.user, intrmid);
-      return res.redirect(`${serviceURL}?ssoToken=${intrmid}`);
-    }
-
-    // return res.render('login', {
-    //   title: 'SSO-Server | Login',
-    // });
-  }
-
-  async doLogin() {
     return {
-      msg: 'POST LOGIN with CREDENTIALS',
+      statusCode: HttpStatus.OK,
+      message: 'Login successful',
+      ...token,
     };
   }
 
-  async verifyToken() {
+  private _createToken({ email }: UserDto) {
+    const user: JwtPayload = { email };
+    const accessToken = this.jwtService.sign(user);
     return {
-      msg: 'GET VERIFY TOKEN Validation',
+      expiresIn: process.env.JWT_EXPIRES_IN,
+      accessToken,
     };
+  }
+
+  async validateUser(payload: JwtPayload) {
+    const user = await this.userService.findByPayload(payload);
+    if (!user) {
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.UNAUTHORIZED,
+          message: 'Invalid token',
+          error: 'Unauthorized',
+        },
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+    return user;
   }
 }

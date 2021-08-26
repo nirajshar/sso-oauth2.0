@@ -27,8 +27,7 @@ export class UserService {
       throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
     }
 
-    // compare passwords
-    const areEqual = await bcrypt.compare(user.password, password);
+    const areEqual = await bcrypt.compare(password, user.password);
 
     if (!areEqual) {
       throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
@@ -59,5 +58,5 @@ export class UserService {
     });
     await this.userRepository.save(user);
     return toUserDto(user);
-  } 
+  }
 }
