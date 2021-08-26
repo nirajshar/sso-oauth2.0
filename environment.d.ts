@@ -11,5 +11,7 @@ declare namespace NodeJS {
         MEMCACHE_HOST?:string;
         MEMCACHE_PORT?:string;
         MEMCACHE_SECRET?:string;
+        JWT_SECRET_KEY?:string;
+        JWT_EXPIRES_IN?:string;
     }
 }
