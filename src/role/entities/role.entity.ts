@@ -49,10 +49,6 @@ export class RoleEntity {
   @DeleteDateColumn()
   deleted_at: Date;
 
-  @ManyToOne((type) => ApplicationEntity, (application) => application.id)
-  @JoinColumn({ name: 'application_id' })
-  application: ApplicationEntity;
-
   @ManyToMany((type) => PermissionEntity, { cascade: true })
   @JoinTable({
     name: 'role_owns_permission',

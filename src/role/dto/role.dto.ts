@@ -1,5 +1,4 @@
 import { IsNotEmpty } from 'class-validator';
-import { ApplicationEntity } from 'src/application/entities/application.entity';
 
 export class RoleDto {
   @IsNotEmpty()
@@ -10,8 +9,4 @@ export class RoleDto {
  
   @IsNotEmpty()
   created_at: Date;
-
-  @IsNotEmpty()
-  application: ApplicationEntity;
-
 }
