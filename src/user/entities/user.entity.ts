@@ -31,6 +31,9 @@ export class UserEntity {
   @Column({ type: 'text', nullable: false })
   password: string;
 
+  @Column({ type: 'text', nullable: false })
+  ip_address: string;
+
   @Column()
   @CreateDateColumn()
   created_at: Date;

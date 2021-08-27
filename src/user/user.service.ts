@@ -42,19 +42,19 @@ export class UserService {
     });
   }
 
-  async create(userDto: CreateUserDto): Promise<UserDto> {
-    const { email, password } = userDto;
+  async create(userDto: CreateUserDto, ip_address: string): Promise<UserDto> {
+    const { email, mobile, password } = userDto;
 
     const userInDb = await this.userRepository.findOne({
-      where: { email },
+      where: [{ email }, { mobile }],
     });
     if (userInDb) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Email/Mobile already exists', HttpStatus.BAD_REQUEST);
     }
 
     const user: UserEntity = await this.userRepository.create({
-      email,
-      password,
+      ...userDto,
+      ip_address,
     });
     await this.userRepository.save(user);
     return toUserDto(user);

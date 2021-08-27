@@ -15,35 +15,24 @@ export class AuthService {
 
   // JWT
 
-  async register(createUserDto: CreateUserDto) {
-    try {
-      const user = await this.userService.create(createUserDto);
+  async register(createUserDto: CreateUserDto, ip_address: string) {
+    const user = await this.userService.create(createUserDto, ip_address);
 
-      if (user) {
-        return {
-          statusCode: HttpStatus.OK,
-          message: 'User created successfully',
-        };
-      } else {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.BAD_REQUEST,
-            message: 'Request Failed',
-            error: 'Bad Request',
-          },
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    } catch (err) {
+    if (!user) {
       throw new HttpException(
         {
-          statusCode: HttpStatus.EXPECTATION_FAILED,
-          message: 'Something went wrong',
-          error: 'Expectation Failed',
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'User registration failed',
+          error: 'Bad Request',
         },
-        HttpStatus.EXPECTATION_FAILED,
+        HttpStatus.BAD_REQUEST,
       );
     }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User created successfully',
+    };
   }
 
   async login(loginUserDto: LoginUserDto) {
