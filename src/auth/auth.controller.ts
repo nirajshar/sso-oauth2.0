@@ -24,8 +24,7 @@ export class AuthController {
     }
   
     @Get('whoami')
-    @hasRoles('ADMIN')
-    @UseGuards(AuthGuard(), RolesGuard)
+    @UseGuards(AuthGuard())
     public async testAuth(@Req() req: any) {     
       return req.user;
     }

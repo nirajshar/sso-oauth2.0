@@ -12,38 +12,43 @@ export class ApplicationController {
     constructor(private readonly applicationService: ApplicationService) {}
     
     @Get()
-    // @hasRoles('ADMIN')
-    @UseGuards(AuthGuard('jwt'))
+    @hasRoles('SUPER-ADMIN')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     async getAllApplications() {
         return await this.applicationService.getAllApplications();
     }
 
     @Post()
-    @UseGuards(AuthGuard('jwt'))
+    @hasRoles('SUPER-ADMIN')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     async createOneApplication(@Body() createApplicationDto: CreateApplicationDto) {
         return await this.applicationService.createOneApplication(createApplicationDto);
     }
 
     @Get('/:id')
-    @UseGuards(AuthGuard('jwt'))
+    @hasRoles('SUPER-ADMIN')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     async getOneApplication(@Param('id') id: string) {
         return await this.applicationService.getOneApplication(id);
     }   
 
     @Put('/:id')
-    @UseGuards(AuthGuard('jwt'))
+    @hasRoles('SUPER-ADMIN')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     async updateOneApplication(@Param('id') id: string, @Body() updateApplicationDTO: UpdateApplicationDTO ) {
         return await this.applicationService.updateOneApplication(id, updateApplicationDTO);
     }
 
     @Delete('/:id')
-    @UseGuards(AuthGuard('jwt'))
+    @hasRoles('SUPER-ADMIN')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     async deleteOneApplication(@Param('id') id: string) {
         return await this.applicationService.deleteOneApplication(id);
     }
 
     @Post('/generate-secret/:id')
-    @UseGuards(AuthGuard('jwt'))
+    @hasRoles('SUPER-ADMIN')
+    @UseGuards(AuthGuard('jwt'), RolesGuard)
     async generateNewApplicationSecret(@Param('id') id: string) {
         return this.applicationService.generateNewApplicationSecret(id);
     }

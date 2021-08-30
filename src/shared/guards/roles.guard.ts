@@ -3,7 +3,6 @@ import {
   CanActivate,
   ExecutionContext,
   Inject,
-  forwardRef,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { UserService } from 'src/user/user.service';
@@ -11,9 +10,8 @@ import { UserService } from 'src/user/user.service';
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(
-    private reflector: Reflector,
-    @Inject(forwardRef(() => UserService))
-    private readonly userService: UserService,
+    private reflector: Reflector,    
+    @Inject(UserService) private readonly userService: UserService,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -22,10 +20,10 @@ export class RolesGuard implements CanActivate {
       return false;
     }
     const request = context.switchToHttp().getRequest();
+    const user = request.user;
     // console.log(request);
     // console.log(roles);
-    const user = request.user;
-
+    // console.log(user);
     const userRole = await this.userService.getUserRole(user.id);
 
     return roles.includes(userRole) ? true : false;
