@@ -40,3 +40,4 @@ lerna-debug.log*
 .gitignore
 Request-Parameters.txt
 src/auth/auth-sso.txt
+user-has-application.txt

@@ -68,14 +68,14 @@ export class UserService {
     return toUserDto(user);
   }
 
-  // User Role
+  /**
+   * User Role
+   */
   async getUserRole(id: string) {
     const user = await this.userRepository.findOne({
       where: { id: parseInt(id) },
       relations: ['role'],
     });
-
-    // console.log(user);    
 
     if (!user) {
       throw new UnauthorizedException();

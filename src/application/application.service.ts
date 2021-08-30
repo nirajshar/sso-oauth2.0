@@ -195,4 +195,6 @@ export class ApplicationService {
       applications: applications.map((app) => app.allowed_url),
     };
   }
+
+
 }

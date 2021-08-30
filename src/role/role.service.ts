@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CreateClientDto } from 'src/client/dto/create.dto';
 import { PermissionEntity } from 'src/permission/entities/permission.entity';
 import { Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create.dto';
@@ -13,8 +12,10 @@ import { toRolePermissionDto } from './ro/toRolePermissionDto.dto';
 @Injectable()
 export class RoleService {
   constructor(
-    @InjectRepository(RoleEntity) private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(PermissionEntity) private readonly permissionRepository: Repository<PermissionEntity>,
+    @InjectRepository(RoleEntity)
+    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectRepository(PermissionEntity)
+    private readonly permissionRepository: Repository<PermissionEntity>,
   ) {}
 
   async getAllRoles() {
@@ -63,7 +64,7 @@ export class RoleService {
   async getOneRole(id: string) {
     const role = await this.roleRepository.findOne({
       where: { id: parseInt(id) },
-      relations: ['owns']
+      relations: ['owns'],
     });
     if (!role) {
       throw new HttpException(
@@ -103,7 +104,7 @@ export class RoleService {
 
     const updatedRole = await this.roleRepository.findOne({
       where: { id: role.id },
-      relations: ['owns']
+      relations: ['owns'],
     });
 
     return {
@@ -137,7 +138,9 @@ export class RoleService {
     };
   }
 
-  // Role OWNS Permissions
+  /**
+   * Role OWNS Permissions
+   */
 
   async grantPermissionsToRole(
     id: string,
@@ -244,7 +247,7 @@ export class RoleService {
             (permission) => permission.id !== oldPermission.id,
           );
           await this.roleRepository.save(role);
-        } 
+        }
       }
     }
 
@@ -259,4 +262,12 @@ export class RoleService {
       role: toRolePermissionDto(role),
     };
   }
+
+  /**
+   * User vs Role
+   */
+
+  async assignRoleToUser() {}
+
+  async revokeRoleFromUser() {}
 }
