@@ -3,13 +3,16 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ApplicationEntity } from 'src/application/entities/application.entity';
+import { RoleEntity } from 'src/role/entities/role.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -63,4 +66,11 @@ export class UserEntity {
     },
   })
   user_has_application: ApplicationEntity[];
+
+  @OneToOne(() => RoleEntity, { cascade: true, nullable : true })
+  @JoinColumn({
+    name: 'role_id'
+  })
+  role: RoleEntity;
+
 }

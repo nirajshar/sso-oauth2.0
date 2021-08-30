@@ -1,9 +1,10 @@
 import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { JwtPayload } from 'src/auth/dto/jwtPayload.interface';
+import { RolesGuard } from 'src/shared/guards/roles.guard';
 import { CreateUserDto } from 'src/user/dto/create.dto';
 import { LoginUserDto } from 'src/user/dto/login.dto';
 import { AuthService } from './auth.service';
+import {hasRoles} from '../shared/decorators/roles.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -23,7 +24,9 @@ export class AuthController {
     }
   
     @Get('whoami')
-    @UseGuards(AuthGuard())
+    // @UseGuards(AuthGuard())
+    @hasRoles('ADMIN')
+    @UseGuards(AuthGuard(), RolesGuard)
     public async testAuth(@Req() req: any) {     
       return req.user;
     }

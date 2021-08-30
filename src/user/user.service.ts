@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create.dto';
@@ -49,7 +54,10 @@ export class UserService {
       where: [{ email }, { mobile }],
     });
     if (userInDb) {
-      throw new HttpException('Email/Mobile already exists', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'Email/Mobile already exists',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     const user: UserEntity = await this.userRepository.create({
@@ -58,5 +66,21 @@ export class UserService {
     });
     await this.userRepository.save(user);
     return toUserDto(user);
+  }
+
+  // User Role
+  async getUserRole(id: string) {
+    const user = await this.userRepository.findOne({
+      where: { id: parseInt(id) },
+      relations: ['role'],
+    });
+
+    // console.log(user);    
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return user.role && user.role.name ? user.role.name : null;
   }
 }
