@@ -35,7 +35,7 @@ export class PocService {
   }
 
   async createOnePoc(createPocDto: CreatePocDto) {
-    const pocExists = this.pocRepository.findOne({
+    const pocExists = await this.pocRepository.findOne({
       where: [{ email: createPocDto.email }, { contact: createPocDto.contact }],
     });
 
@@ -50,7 +50,7 @@ export class PocService {
       );
     }
 
-    const poc = this.pocRepository.create(createPocDto);
+    const poc = await this.pocRepository.create(createPocDto);
     const storePoc = await this.pocRepository.save(poc);
 
     return {
@@ -98,7 +98,16 @@ export class PocService {
       );
     }
 
-    await this.pocRepository.update({ id: poc.id }, updatePocDto);
+    await this.pocRepository.update(
+      { id: poc.id },
+      {
+        name: updatePocDto.name,
+        email: updatePocDto.email,
+        contact: updatePocDto.contact,
+        client: updatePocDto.client,
+        status: updatePocDto.status,
+      },
+    );
 
     const updatedPoc = await this.pocRepository.findOne({
       where: { id: poc.id },

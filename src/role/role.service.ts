@@ -40,7 +40,7 @@ export class RoleService {
   }
 
   async createOneRole(createRoleDto: CreateRoleDto) {
-    const roleExists = this.roleRepository.findOne({
+    const roleExists = await this.roleRepository.findOne({
       where: { name: createRoleDto.name },
     });
 
@@ -55,7 +55,7 @@ export class RoleService {
       );
     }
 
-    const role = this.roleRepository.create(createRoleDto);
+    const role = await this.roleRepository.create(createRoleDto);
     const storeRole = await this.roleRepository.save(role);
 
     return {
@@ -104,7 +104,10 @@ export class RoleService {
       );
     }
 
-    await this.roleRepository.update({ id: role.id }, updateRoleDto);
+    await this.roleRepository.update({ id: role.id }, {
+      name: updateRoleDto.name,
+      status: updateRoleDto.status
+    });
 
     const updatedRole = await this.roleRepository.findOne({
       where: { id: role.id },

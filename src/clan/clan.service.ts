@@ -36,7 +36,7 @@ export class ClanService {
 
   async createOneClan(createClanDto: CreateClanDto) {
     try {
-      const clan = this.clanRepository.create(createClanDto);
+      const clan = await this.clanRepository.create(createClanDto);
       const storeClan = await this.clanRepository.save(clan);
 
       return {
@@ -94,7 +94,12 @@ export class ClanService {
       );
     }
 
-    await this.clanRepository.update({ id: clan.id }, updateClanDto);
+    await this.clanRepository.update({ id: clan.id }, {
+      name: updateClanDto.name,
+      client: updateClanDto.client,
+      count: updateClanDto.count,
+      type: updateClanDto.type
+    });
 
     const updatedClan = await this.clanRepository.findOne({
       where: { id: clan.id },

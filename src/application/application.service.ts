@@ -36,7 +36,7 @@ export class ApplicationService {
   }
 
   async createOneApplication(createApplicationDto: CreateApplicationDto) {
-    const applicationExists = this.applicationRepository.findOne({
+    const applicationExists = await this.applicationRepository.findOne({
       where: [
         { name: createApplicationDto.name },
         { allowed_url: createApplicationDto.allowed_url },
@@ -54,7 +54,9 @@ export class ApplicationService {
       );
     }
 
-    const application = this.applicationRepository.create(createApplicationDto);
+    const application = await this.applicationRepository.create(
+      createApplicationDto,
+    );
     const storeApplication = await this.applicationRepository.save(application);
 
     return {
@@ -107,7 +109,12 @@ export class ApplicationService {
 
     await this.applicationRepository.update(
       { id: application.id },
-      updateApplicationDTO,
+      {
+        name: updateApplicationDTO.name,
+        allowed_url: updateApplicationDTO.allowed_url,
+        redirect_url: updateApplicationDTO.redirect_url,
+        status: updateApplicationDTO.status,
+      },
     );
 
     const updatedApplication = await this.applicationRepository.findOne({

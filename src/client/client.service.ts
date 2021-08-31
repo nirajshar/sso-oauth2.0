@@ -35,12 +35,15 @@ export class ClientService {
   }
 
   async createOneClient(createClientDto: CreateClientDto) {
-    const clientExists = this.clientRepository.findOne({
+    const clientExists = await this.clientRepository.findOne({
       where: [
         { email: createClientDto.email },
         { actual_name: createClientDto.actual_name },
       ],
     });
+
+    console.log(clientExists);
+    
 
     if (clientExists) {
       throw new HttpException(
@@ -53,7 +56,7 @@ export class ClientService {
       );
     }
 
-    const client = this.clientRepository.create(createClientDto);
+    const client = await this.clientRepository.create(createClientDto);
     const storeClient = await this.clientRepository.save(client);
 
     return {
@@ -101,7 +104,19 @@ export class ClientService {
       );
     }
 
-    await this.clientRepository.update({ id: client.id }, updateClientDto);
+    await this.clientRepository.update({ id: client.id }, {
+      actual_name: updateClientDto.actual_name,
+      display_name: updateClientDto.display_name,
+      address: updateClientDto.address,
+      application: updateClientDto.application,
+      city: updateClientDto.city,
+      contact: updateClientDto.contact,
+      country: updateClientDto.country,
+      email: updateClientDto.email,
+      pincode: updateClientDto.pincode,
+      state: updateClientDto.state,
+      status: updateClientDto.status
+    });
 
     const updatedClient = await this.clientRepository.findOne({
       where: { id: client.id },

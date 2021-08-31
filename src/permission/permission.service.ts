@@ -35,7 +35,7 @@ export class PermissionService {
   }
 
   async createOnePermission(createPermissionDto: CreatePermissionDto) {
-    const permissionExists = this.permissionRepository.findOne({
+    const permissionExists = await this.permissionRepository.findOne({
       where: { name: createPermissionDto.name },
     });
 
@@ -50,7 +50,7 @@ export class PermissionService {
       );
     }
 
-    const permission = this.permissionRepository.create(createPermissionDto);
+    const permission = await this.permissionRepository.create(createPermissionDto);
     const storePermission = await this.permissionRepository.save(permission);
 
     return {
@@ -103,7 +103,10 @@ export class PermissionService {
 
     await this.permissionRepository.update(
       { id: permission.id },
-      updatePermissionDto,
+      {
+        name: updatePermissionDto.name,
+        status: updatePermissionDto.status
+      },
     );
 
     const updatedPermission = await this.permissionRepository.findOne({

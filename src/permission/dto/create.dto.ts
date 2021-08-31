@@ -8,7 +8,4 @@ export class CreatePermissionDto {
   @IsNotEmpty()
   status: string;
  
-  @IsNotEmpty()
-  application: ApplicationEntity;
-
 }

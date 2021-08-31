@@ -1,5 +1,4 @@
 import { IsNotEmpty } from 'class-validator';
-import { ApplicationEntity } from 'src/application/entities/application.entity';
 
 export class UpdateRoleDto {
   @IsNotEmpty()
@@ -7,8 +6,4 @@ export class UpdateRoleDto {
 
   @IsNotEmpty()
   status: string;
-
-  @IsNotEmpty()
-  application: ApplicationEntity;
-
 }

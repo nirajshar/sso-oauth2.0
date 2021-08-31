@@ -1,14 +1,11 @@
-import { ApplicationEntity } from 'src/application/entities/application.entity';
 import { PermissionEntity } from 'src/permission/entities/permission.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   JoinTable,
   ManyToMany,
-  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
