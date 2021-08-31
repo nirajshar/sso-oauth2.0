@@ -36,28 +36,32 @@ export class ApplicationService {
   }
 
   async createOneApplication(createApplicationDto: CreateApplicationDto) {
-    try {
-      const application =
-        this.applicationRepository.create(createApplicationDto);
-      const storeApplication = await this.applicationRepository.save(
-        application,
-      );
+    const applicationExists = this.applicationRepository.findOne({
+      where: [
+        { name: createApplicationDto.name },
+        { allowed_url: createApplicationDto.allowed_url },
+      ],
+    });
 
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: 'Application created successfully',
-        application: toApplicationDto(application),
-      };
-    } catch (err) {
+    if (applicationExists) {
       throw new HttpException(
         {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'Something went wrong',
-          error: 'Bad Request',
+          statusCode: HttpStatus.CONFLICT,
+          message: 'Application Name / URL already exists',
+          error: 'Conflict',
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.CONFLICT,
       );
     }
+
+    const application = this.applicationRepository.create(createApplicationDto);
+    const storeApplication = await this.applicationRepository.save(application);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Application created successfully',
+      application: toApplicationDto(application),
+    };
   }
 
   async getOneApplication(id: string) {
@@ -195,6 +199,4 @@ export class ApplicationService {
       applications: applications.map((app) => app.allowed_url),
     };
   }
-
-
 }

@@ -40,25 +40,29 @@ export class RoleService {
   }
 
   async createOneRole(createRoleDto: CreateRoleDto) {
-    try {
-      const role = this.roleRepository.create(createRoleDto);
-      const storeRole = await this.roleRepository.save(role);
+    const roleExists = this.roleRepository.findOne({
+      where: { name: createRoleDto.name },
+    });
 
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: 'Role created successfully',
-        role: toRoleDto(role),
-      };
-    } catch (err) {
+    if (roleExists) {
       throw new HttpException(
         {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'Something went wrong',
-          error: 'Bad Request',
+          statusCode: HttpStatus.CONFLICT,
+          message: 'Role Name already exists',
+          error: 'Conflict',
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.CONFLICT,
       );
     }
+
+    const role = this.roleRepository.create(createRoleDto);
+    const storeRole = await this.roleRepository.save(role);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Role created successfully',
+      role: toRoleDto(role),
+    };
   }
 
   async getOneRole(id: string) {

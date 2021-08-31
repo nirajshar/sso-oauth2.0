@@ -35,25 +35,32 @@ export class ClientService {
   }
 
   async createOneClient(createClientDto: CreateClientDto) {
-    try {
-      const client = this.clientRepository.create(createClientDto);
-      const storeClient = await this.clientRepository.save(client);
+    const clientExists = this.clientRepository.findOne({
+      where: [
+        { email: createClientDto.email },
+        { actual_name: createClientDto.actual_name },
+      ],
+    });
 
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: 'Client created successfully',
-        client: toClientDto(client),
-      };
-    } catch (err) {
+    if (clientExists) {
       throw new HttpException(
         {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'Something went wrong',
-          error: 'Bad Request',
+          statusCode: HttpStatus.CONFLICT,
+          message: 'Client Name / Email already exists',
+          error: 'Conflict',
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.CONFLICT,
       );
     }
+
+    const client = this.clientRepository.create(createClientDto);
+    const storeClient = await this.clientRepository.save(client);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Client created successfully',
+      client: toClientDto(client),
+    };
   }
 
   async getOneClient(id: string) {

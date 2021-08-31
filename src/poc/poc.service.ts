@@ -35,25 +35,29 @@ export class PocService {
   }
 
   async createOnePoc(createPocDto: CreatePocDto) {
-    try {
-      const poc = this.pocRepository.create(createPocDto);
-      const storePoc = await this.pocRepository.save(poc);
+    const pocExists = this.pocRepository.findOne({
+      where: [{ email: createPocDto.email }, { contact: createPocDto.contact }],
+    });
 
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: 'POC created successfully',
-        poc: toPocDto(poc),
-      };
-    } catch (err) {
+    if (pocExists) {
       throw new HttpException(
         {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'Something went wrong',
-          error: 'Bad Request',
+          statusCode: HttpStatus.CONFLICT,
+          message: 'POC Email / Contact already exists',
+          error: 'Conflict',
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.CONFLICT,
       );
     }
+
+    const poc = this.pocRepository.create(createPocDto);
+    const storePoc = await this.pocRepository.save(poc);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'POC created successfully',
+      poc: toPocDto(poc),
+    };
   }
 
   async getOnePoc(id: string) {

@@ -35,25 +35,29 @@ export class PermissionService {
   }
 
   async createOnePermission(createPermissionDto: CreatePermissionDto) {
-    try {
-      const permission = this.permissionRepository.create(createPermissionDto);
-      const storePermission = await this.permissionRepository.save(permission);
+    const permissionExists = this.permissionRepository.findOne({
+      where: { name: createPermissionDto.name },
+    });
 
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: 'Permission created successfully',
-        permission: toPermissionDto(permission),
-      };
-    } catch (err) {
+    if (permissionExists) {
       throw new HttpException(
         {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'Something went wrong',
-          error: 'Bad Request',
+          statusCode: HttpStatus.CONFLICT,
+          message: 'Permission Name already exists',
+          error: 'Conflict',
         },
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.CONFLICT,
       );
     }
+
+    const permission = this.permissionRepository.create(createPermissionDto);
+    const storePermission = await this.permissionRepository.save(permission);
+
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: 'Permission created successfully',
+      permission: toPermissionDto(permission),
+    };
   }
 
   async getOnePermission(id: string) {
